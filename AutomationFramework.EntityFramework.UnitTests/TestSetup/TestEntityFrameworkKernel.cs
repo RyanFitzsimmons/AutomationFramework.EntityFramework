@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernel : KernelBase<TestEntityFrameworkKernelDataLayer>
+    public class TestEntityFrameworkKernel : KernelBase<int, TestEntityFrameworkKernelDataLayer>
     {
         public TestEntityFrameworkKernel(int maxParallelChildren, ILogger logger = null) : base(logger)
         {
@@ -20,7 +20,7 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 
         private int MaxParallelChildren { get; }
 
-        protected override IModule CreateStages()
+        protected override IModule<int> CreateStages()
         {
             return new TestEntityFrameworkModule()
             {

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class KernelDataLayer<TDbContext, TJob, TRequest, TMetaData> : IKernelDataLayer
+    public abstract class KernelDataLayer<TDbContext, TJob, TRequest, TMetaData> : IKernelDataLayer<int>
         where TDbContext : DbContext
         where TJob : Job<TRequest, TMetaData>
         where TRequest : Request<TMetaData>
@@ -14,19 +14,19 @@ namespace AutomationFramework.EntityFramework
     {
         protected abstract DbContextFactory<TDbContext> GetDbContextFactory();
 
-        public bool GetIsEmptyId(object Id)
+        public bool GetIsEmptyId(int Id)
         {
-            return Id == null || (int)0 == (int)Id;
+            return Id == 0;
         }
 
-        public void CheckExistingJob(object id, string version)
+        public void CheckExistingJob(int id, string version)
         {
             using var context = GetDbContextFactory().Create();
-            if (!context.Set<TJob>().Any(x => x.Id == (int)id && x.Version == version))
-                throw new Exception($"The job ({(int)id}) either doesn't exist or last ran with an old version of program");
+            if (!context.Set<TJob>().Any(x => x.Id == id && x.Version == version))
+                throw new Exception($"The job ({id}) either doesn't exist or last ran with an old version of program");
         }
 
-        public object CreateJob(IKernel kernel)
+        public int CreateJob(IKernel<int> kernel)
         {
             using var context = GetDbContextFactory().Create();
             var job = CreateEntityFrameworkJob(kernel);
@@ -35,18 +35,18 @@ namespace AutomationFramework.EntityFramework
             return job.Id;
         }
 
-        public object CreateRequest(RunInfo runInfo, object metaData)
+        public int CreateRequest(RunInfo<int> runInfo, object metaData)
         {
             using var context = GetDbContextFactory().Create();
             var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
-            var job = context.Set<TJob>().Single(x => x.Id == (int)runInfo.JobId);
+            var job = context.Set<TJob>().Single(x => x.Id == runInfo.JobId);
             job.Requests.Add(request);
             context.SaveChanges();
             return request.Id;
         }
 
-        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
+        protected abstract TJob CreateEntityFrameworkJob(IKernel<int> kernel);
 
-        protected abstract TRequest CreateEntityFrameworkRequest(RunInfo runInfo, TMetaData metaData);
+        protected abstract TRequest CreateEntityFrameworkRequest(RunInfo<int> runInfo, TMetaData metaData);
     }
 }
