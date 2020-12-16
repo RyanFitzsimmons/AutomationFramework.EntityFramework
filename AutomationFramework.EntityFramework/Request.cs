@@ -12,9 +12,9 @@ namespace AutomationFramework.EntityFramework
         public RunType RunType { get; set; }
         public int JobId { get; set; }
         [Column("Path")]
-        public long PathIndices { get; set; }
+        public string PathString { get; set; }
         [NotMapped]
-        public StagePath Path { get => new StagePath { Indices = PathIndices }; set => PathIndices = value.Indices; }
+        public StagePath Path { get => StagePath.Parse(PathString); set => PathString = value.ToString(); }
         [Column("MetaData")]
         public string MetaDataJson { get; set; }
         [NotMapped]

@@ -13,11 +13,13 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
             return new TestDbContextFactory();
         }
 
-        protected override TestEntityFrameworkStage CreateEntityFrameworkStage(IModule<int> module)
+        protected override TestEntityFrameworkStage CreateEntityFrameworkStage(IModule module)
         {
+            var runInfo = GetRunInfo(module.RunInfo);
             return new TestEntityFrameworkStage
             {
-                JobId = (int)module.RunInfo.JobId,
+                JobId = runInfo.JobId,
+                RequestId = runInfo.RequestId,
                 Path = module.StagePath,
                 Name = module.Name,
                 Status = StageStatuses.None,

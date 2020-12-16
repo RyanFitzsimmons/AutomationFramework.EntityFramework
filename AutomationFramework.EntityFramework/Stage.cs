@@ -12,9 +12,9 @@ namespace AutomationFramework.EntityFramework
         public int JobId { get; set; }
         public int RequestId { get; set; }
         [Column("Path")]
-        public long PathIndices { get; set; }
+        public string PathString { get; set; }
         [NotMapped]
-        public StagePath Path { get => new StagePath { Indices = PathIndices }; set => PathIndices = value.Indices; }
+        public StagePath Path { get => StagePath.Parse(PathString); set => PathString = value.ToString(); }
         public string Name { get; set; }
         public StageStatuses Status { get; set; }
         public DateTime StartedAt { get; set; }

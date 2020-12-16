@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernel : KernelBase<int, TestEntityFrameworkKernelDataLayer>
+    public class TestEntityFrameworkKernel : KernelBase<TestEntityFrameworkKernelDataLayer>
     {
         public TestEntityFrameworkKernel(int maxParallelChildren, ILogger logger = null) : base(logger)
         {
@@ -20,14 +20,15 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 
         private int MaxParallelChildren { get; }
 
-        protected override IModule<int> CreateStages()
+        protected override IStageBuilder Configure()
         {
-            return new TestEntityFrameworkModule()
-            {
-                Name = "Test EntityFramework Stage",
-                IsEnabled = true,
-                MaxParallelChildren = MaxParallelChildren,
-            };
+            return GetStageBuilder<TestEntityFrameworkModule>()
+                .Configure((m) =>
+                {
+                    m.Name = "Test EntityFramework Stage";
+                    m.IsEnabled = true;
+                    m.MaxParallelChildren = MaxParallelChildren;
+                });
         }
     }
 }

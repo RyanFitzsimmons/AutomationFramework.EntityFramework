@@ -9,13 +9,13 @@ namespace AutomationFramework.EntityFramework
         internal static TStage GetStage<TStage>(RunInfo<int> runInfo, StagePath path, DbContext context)
             where TStage : Stage
         {
-            return context.Set<TStage>().Single(x => x.JobId == (int)runInfo.JobId && x.RequestId == (int)runInfo.RequestId && x.PathIndices == path.Indices);
+            return context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.PathString == path.ToString());
         }
 
         internal static TStage GetLastStageWithResult<TStage>(RunInfo<int> runInfo, StagePath path, DbContext context)
             where TStage : Stage
         {
-            return context.Set<TStage>().Where(x => x.JobId == (int)runInfo.JobId && x.PathIndices == path.Indices && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
+            return context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.PathString == path.ToString() && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
         }
 
         internal static void CreateStage<TDbContext, TStage>(DbContextFactory<TDbContext> dbContextFactory, TStage stage) 
