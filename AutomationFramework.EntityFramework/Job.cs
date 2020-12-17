@@ -6,7 +6,7 @@ namespace AutomationFramework.EntityFramework
 {
     public abstract class Job<TRequest, TMetaData>
         where TRequest : Request<TMetaData>
-        where TMetaData : class
+        where TMetaData : class, IMetaData
     {
         public int Id { get; set; }
         public string Version { get; set; }
