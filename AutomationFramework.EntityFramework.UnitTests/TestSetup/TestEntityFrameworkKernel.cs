@@ -30,10 +30,5 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
                     m.MaxParallelChildren = MaxParallelChildren;
                 });
         }
-
-        protected override TestEntityFrameworkKernelDataLayer CreateDataLayer()
-        {
-            return new TestEntityFrameworkKernelDataLayer();
-        }
     }
 }
