@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class Request<TMetaData> where TMetaData : class
+    public abstract class Request<TMetaData> where TMetaData : class, IMetaData
     {
         public int Id { get; set; }
         public RunType RunType { get; set; }
