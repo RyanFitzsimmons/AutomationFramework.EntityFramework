@@ -10,7 +10,7 @@ namespace AutomationFramework.EntityFramework
         where TDbContext : DbContext
         where TJob : Job<TRequest, TMetaData>
         where TRequest : Request<TMetaData>
-        where TMetaData : class
+        where TMetaData : class, IMetaData
     {
         protected abstract DbContextFactory<TDbContext> GetDbContextFactory();
 
@@ -41,7 +41,7 @@ namespace AutomationFramework.EntityFramework
             return new RunInfo<int>(runInfo.Type, job.Id, GetRunInfo(runInfo).RequestId, runInfo.Path.Clone());
         }
 
-        public IRunInfo CreateRequest(IRunInfo runInfo, object metaData)
+        public IRunInfo CreateRequest(IRunInfo runInfo, IMetaData metaData)
         {
             using var context = GetDbContextFactory().Create();
             var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
@@ -67,6 +67,12 @@ namespace AutomationFramework.EntityFramework
                 CheckExistingJob(runInfo, kernel.Version);
                 return runInfo;
             }
+        }
+
+        public IMetaData GetMetaData(IRunInfo runInfo)
+        {
+            using var context = GetDbContextFactory().Create();
+            return context.Set<TRequest>().Single(x => x.Id == GetRunInfo(runInfo).RequestId).MetaData;
         }
     }
 }

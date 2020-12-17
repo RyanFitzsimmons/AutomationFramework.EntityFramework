@@ -19,7 +19,7 @@ namespace AutomationFramework.EntityFramework.UnitTests
         public void Test1()
         {
             var job = new TestEntityFrameworkKernel(1, new TestLogger());
-            job.Run(RunInfo<int>.Empty);
+            job.Run(RunInfo<int>.Empty, new TestEntityFrameworkMetaData());
             //Test1Results(job);
         }
     }

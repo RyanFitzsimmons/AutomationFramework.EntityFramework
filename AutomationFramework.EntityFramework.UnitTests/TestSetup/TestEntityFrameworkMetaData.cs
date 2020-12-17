@@ -4,7 +4,8 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkMetaData
+    public class TestEntityFrameworkMetaData : IMetaData
     {
+        public string Test { get; set; } = "Test Meta String";
     }
 }

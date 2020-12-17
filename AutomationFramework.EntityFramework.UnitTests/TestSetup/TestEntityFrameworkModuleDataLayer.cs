@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkModuleDataLayer : ModuleDataLayer<TestDbContext, TestEntityFrameworkStage>
+    public class TestEntityFrameworkModuleDataLayer : ModuleDataLayer<TestDbContext, TestEntityFrameworkStage, TestEntityFrameworkRequest, TestEntityFrameworkMetaData>
     {
         protected override DbContextFactory<TestDbContext> GetDbContextFactory()
         {
