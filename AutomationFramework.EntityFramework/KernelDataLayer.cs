@@ -8,11 +8,11 @@ namespace AutomationFramework.EntityFramework
 {
     public abstract class KernelDataLayer<TDbContext, TJob, TRequest, TMetaData> : IKernelDataLayer
         where TDbContext : DbContext
-        where TJob : Job<TRequest, TMetaData>
-        where TRequest : Request<TMetaData>
+        where TJob : Job
+        where TRequest : Request
         where TMetaData : class, IMetaData
     {
-        protected abstract DbContextFactory<TDbContext> GetDbContextFactory();
+        protected abstract DbContextFactory GetDbContextFactory();
 
         public RunInfo<int> GetRunInfo(IRunInfo runInfo)
         {
@@ -46,8 +46,7 @@ namespace AutomationFramework.EntityFramework
             using var context = GetDbContextFactory().Create();
             var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
             var jobId = GetRunInfo(runInfo).JobId;
-            var job = context.Set<TJob>().Single(x => x.Id == jobId);
-            job.Requests.Add(request);
+            context.Set<TRequest>().Add(request);
             context.SaveChanges();
             return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path.Clone());
         }
@@ -72,7 +71,7 @@ namespace AutomationFramework.EntityFramework
         public IMetaData GetMetaData(IRunInfo runInfo)
         {
             using var context = GetDbContextFactory().Create();
-            return context.Set<TRequest>().Single(x => x.Id == GetRunInfo(runInfo).RequestId).MetaData;
+            return context.Set<TRequest>().Single(x => x.Id == GetRunInfo(runInfo).RequestId).MetaDataJson.FromJson<TMetaData>(); 
         }
     }
 }

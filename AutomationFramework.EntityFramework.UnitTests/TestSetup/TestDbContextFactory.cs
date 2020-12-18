@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestDbContextFactory : DbContextFactory<TestDbContext>
+    public class TestDbContextFactory : DbContextFactory
     {
         public override DbContext Create()
         {

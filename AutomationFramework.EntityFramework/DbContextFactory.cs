@@ -3,7 +3,7 @@ using System;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class DbContextFactory<TDbContext> where TDbContext : DbContext
+    public abstract class DbContextFactory
     {
         public abstract DbContext Create();
     }

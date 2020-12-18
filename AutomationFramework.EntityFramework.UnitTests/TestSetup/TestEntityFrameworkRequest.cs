@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkRequest : Request<TestEntityFrameworkMetaData>
+    public class TestEntityFrameworkRequest : Request
     {
     }
 }

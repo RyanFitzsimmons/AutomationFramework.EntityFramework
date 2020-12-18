@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class Request<TMetaData> where TMetaData : class, IMetaData
+    public abstract class Request
     {
         public int Id { get; set; }
         public RunType RunType { get; set; }
@@ -17,11 +17,5 @@ namespace AutomationFramework.EntityFramework
         public StagePath Path { get => StagePath.Parse(PathString); set => PathString = value.ToString(); }
         [Column("MetaData")]
         public string MetaDataJson { get; set; }
-        [NotMapped]
-        public TMetaData MetaData
-        {
-            get => MetaDataJson?.FromJson<TMetaData>();
-            set => MetaDataJson = value?.ToJson();
-        }
     }
 }

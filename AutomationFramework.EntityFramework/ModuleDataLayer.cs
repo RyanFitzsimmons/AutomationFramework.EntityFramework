@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class ModuleDataLayer<TDbContext, TStage, TRequest, TMetaData> : IModuleDataLayer
-        where TDbContext : DbContext
+    public abstract class ModuleDataLayer<TDbContext, TStage> : IModuleDataLayer
         where TStage : Stage
-        where TRequest : Request<TMetaData>
-        where TMetaData : class, IMetaData
     {
-        protected abstract DbContextFactory<TDbContext> GetDbContextFactory();
+        protected abstract DbContextFactory GetDbContextFactory();
 
         public RunInfo<int> GetRunInfo(IRunInfo runInfo)
         {
@@ -70,12 +67,6 @@ namespace AutomationFramework.EntityFramework
         }
 
         protected abstract TStage CreateEntityFrameworkStage(IModule module);
-
-        public IMetaData GetMetaData(IModule module)
-        {
-            using var context = GetDbContextFactory().Create();
-            return context.Set<TRequest>().Single(x => x.Id == GetRunInfo(module.RunInfo).RequestId).MetaData;
-        }
 
         private static TStage GetStage(RunInfo<int> runInfo, StagePath path, DbContext context)
         {

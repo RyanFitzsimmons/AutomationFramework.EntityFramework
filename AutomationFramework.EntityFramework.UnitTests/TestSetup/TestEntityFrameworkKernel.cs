@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernel : KernelBase<TestEntityFrameworkKernelDataLayer>
+    public class TestEntityFrameworkKernel<TMetaData> : KernelBase<TestEntityFrameworkKernelDataLayer<TMetaData>> where TMetaData : class, IMetaData
     {
         public TestEntityFrameworkKernel(int maxParallelChildren, ILogger logger = null) : base(logger)
         {

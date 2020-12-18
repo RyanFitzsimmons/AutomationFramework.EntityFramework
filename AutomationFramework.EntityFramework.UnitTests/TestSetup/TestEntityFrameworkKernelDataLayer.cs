@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernelDataLayer : KernelDataLayer<
+    public class TestEntityFrameworkKernelDataLayer<TMetaData> : KernelDataLayer<
             TestDbContext,
             TestEntityFrameworkJob,
             TestEntityFrameworkRequest,
-            TestEntityFrameworkMetaData>
+            TMetaData> where TMetaData : class, IMetaData
     {
-        protected override DbContextFactory<TestDbContext> GetDbContextFactory()
+        protected override DbContextFactory GetDbContextFactory()
         {
             return new TestDbContextFactory();
         }
@@ -27,14 +27,14 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
             };
         }
 
-        protected override TestEntityFrameworkRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TestEntityFrameworkMetaData metaData)
+        protected override TestEntityFrameworkRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData)
         {
             return new TestEntityFrameworkRequest
             {
                 JobId = GetRunInfo(runInfo).JobId,
                 RunType = runInfo.Type,
                 Path = runInfo.Path,
-                MetaData = metaData,
+                MetaDataJson = metaData.ToJson(),
             };
         }
     }
