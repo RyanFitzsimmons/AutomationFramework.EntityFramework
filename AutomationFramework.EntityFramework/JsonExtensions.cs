@@ -16,7 +16,7 @@ namespace AutomationFramework.EntityFramework
 
         public static string ToJson<T>(this T input) where T : class
         {
-            return JsonSerializer.Serialize<T>(input);
+            return JsonSerializer.Serialize<T>(input, new JsonSerializerOptions { WriteIndented = true });
         }
     }
 }
