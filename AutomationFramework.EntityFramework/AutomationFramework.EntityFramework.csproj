@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutomationFramework" Version="1.0.14" />
+    <PackageReference Include="AutomationFramework" Version="1.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
   </ItemGroup>
 
