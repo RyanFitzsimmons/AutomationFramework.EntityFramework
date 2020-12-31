@@ -7,7 +7,11 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
     public class TestEntityFrameworkModule : Module<TestEntityFrameworkModuleDataLayer, TestEntityFrameworkResult>
     {
-        public override string Name { get; set; } = "Test EntityFramework Stage";
+        public TestEntityFrameworkModule(IRunInfo runInfo, StagePath stagePath, IMetaData metaData) : base(runInfo, stagePath, metaData)
+        {
+        }
+
+        public override string Name { get; init; } = "Test EntityFramework Stage";
 
     }
 }

@@ -20,14 +20,14 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 
         private int MaxParallelChildren { get; }
 
-        protected override IStageBuilder Configure()
+        protected override IStageBuilder Configure(IRunInfo runInfo)
         {
-            return GetStageBuilder<TestEntityFrameworkModule>()
-                .Configure((m) =>
+            return GetStageBuilder<TestEntityFrameworkModule>(runInfo)
+                .Configure((ri, sp, md) => new(ri, sp, md)
                 {
-                    m.Name = "Test EntityFramework Stage";
-                    m.IsEnabled = true;
-                    m.MaxParallelChildren = MaxParallelChildren;
+                    Name = "Test EntityFramework Stage",
+                    IsEnabled = true,
+                    MaxParallelChildren = MaxParallelChildren
                 });
         }
     }
