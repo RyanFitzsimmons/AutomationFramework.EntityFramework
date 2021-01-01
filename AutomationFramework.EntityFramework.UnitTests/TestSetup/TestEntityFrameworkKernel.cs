@@ -9,7 +9,7 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
     public class TestEntityFrameworkKernel<TMetaData> : KernelBase<TestEntityFrameworkDataLayer<TMetaData>> where TMetaData : class, IMetaData
     {
-        public TestEntityFrameworkKernel(int maxParallelChildren, ILogger logger = null) : base(logger)
+        public TestEntityFrameworkKernel(int maxParallelChildren, TestEntityFrameworkDataLayer<TMetaData> dataLayer, ILogger logger = null) : base(dataLayer, logger)
         {
             MaxParallelChildren = maxParallelChildren;
         }
@@ -30,8 +30,5 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
                     MaxParallelChildren = MaxParallelChildren
                 });
         }
-
-        protected override TestEntityFrameworkDataLayer<TMetaData> CreateDataLayer() =>
-            new TestEntityFrameworkDataLayer<TMetaData>();
     }
 }

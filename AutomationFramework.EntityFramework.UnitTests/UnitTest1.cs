@@ -18,7 +18,7 @@ namespace AutomationFramework.EntityFramework.UnitTests
         [Fact]
         public void Test1()
         {
-            var job = new TestEntityFrameworkKernel<MetaData>(1, new TestLogger());
+            var job = new TestEntityFrameworkKernel<MetaData>(1, new TestEntityFrameworkDataLayer<MetaData>(), new TestLogger());
             job.Run(RunInfo<int>.Empty, new MetaData());
             //Test1Results(job);
         }
