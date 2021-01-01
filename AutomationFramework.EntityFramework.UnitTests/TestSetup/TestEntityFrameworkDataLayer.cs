@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernelDataLayer<TMetaData> : KernelDataLayer<
+    public class TestEntityFrameworkDataLayer<TMetaData> : DataLayer<
             TestDbContext,
             TestEntityFrameworkJob,
             TestEntityFrameworkRequest,
-            TMetaData> where TMetaData : class, IMetaData
+            TMetaData,
+            TestEntityFrameworkStage> where TMetaData : class, IMetaData
     {
         protected override DbContextFactory GetDbContextFactory()
         {
@@ -35,6 +36,19 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
                 RunType = runInfo.Type,
                 Path = runInfo.Path,
                 MetaDataJson = metaData.ToJson(),
+            };
+        }
+
+        protected override TestEntityFrameworkStage CreateEntityFrameworkStage(IModule module)
+        {
+            var runInfo = GetRunInfo(module.RunInfo);
+            return new TestEntityFrameworkStage
+            {
+                JobId = runInfo.JobId,
+                RequestId = runInfo.RequestId,
+                Path = module.Path,
+                Name = module.Name,
+                Status = StageStatuses.None,
             };
         }
     }

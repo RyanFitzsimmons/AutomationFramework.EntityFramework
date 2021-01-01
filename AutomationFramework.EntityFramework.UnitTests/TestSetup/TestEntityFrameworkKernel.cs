@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkKernel<TMetaData> : KernelBase<TestEntityFrameworkKernelDataLayer<TMetaData>> where TMetaData : class, IMetaData
+    public class TestEntityFrameworkKernel<TMetaData> : KernelBase<TestEntityFrameworkDataLayer<TMetaData>> where TMetaData : class, IMetaData
     {
         public TestEntityFrameworkKernel(int maxParallelChildren, ILogger logger = null) : base(logger)
         {
@@ -30,5 +30,8 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
                     MaxParallelChildren = MaxParallelChildren
                 });
         }
+
+        protected override TestEntityFrameworkDataLayer<TMetaData> CreateDataLayer() =>
+            new TestEntityFrameworkDataLayer<TMetaData>();
     }
 }

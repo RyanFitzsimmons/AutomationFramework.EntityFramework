@@ -5,9 +5,9 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkModule : Module<TestEntityFrameworkModuleDataLayer, TestEntityFrameworkResult>
+    public class TestEntityFrameworkModule : Module<TestEntityFrameworkResult>
     {
-        public TestEntityFrameworkModule(IRunInfo runInfo, StagePath stagePath, IMetaData metaData) : base(runInfo, stagePath, metaData)
+        public TestEntityFrameworkModule(IDataLayer dataLayer, IRunInfo runInfo, StagePath stagePath) : base(dataLayer, runInfo, stagePath)
         {
         }
 
