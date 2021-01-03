@@ -15,7 +15,5 @@ namespace AutomationFramework.EntityFramework
         public string PathString { get; set; }
         [NotMapped]
         public StagePath Path { get => StagePath.Parse(PathString); set => PathString = value.ToString(); }
-        [Column("MetaData")]
-        public string MetaDataJson { get; set; }
     }
 }

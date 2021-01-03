@@ -20,11 +20,6 @@ namespace AutomationFramework.EntityFramework
             return runInfo as RunInfo<int>;
         }
 
-        public bool GetIsEmptyId(int Id)
-        {
-            return Id == 0;
-        }
-
         public void CheckExistingJob(IRunInfo runInfo, string version)
         {
             using var context = GetDbContextFactory().Create();
@@ -33,34 +28,34 @@ namespace AutomationFramework.EntityFramework
                 throw new Exception($"The job ({jobId}) either doesn't exist or last ran with an old version of program");
         }
 
-        public IRunInfo CreateJob(IKernel kernel, IRunInfo runInfo)
+        public IRunInfo CreateJob(IKernel kernel, IRunInfo runInfo, TMetaData metaData)
         {
             using var context = GetDbContextFactory().Create();
-            var job = CreateEntityFrameworkJob(kernel);
+            var job = CreateEntityFrameworkJob(kernel, metaData);
             context.Set<TJob>().Add(job);
             context.SaveChanges();
             return new RunInfo<int>(runInfo.Type, job.Id, GetRunInfo(runInfo).RequestId, runInfo.Path.Clone());
         }
 
-        public IRunInfo CreateRequest(IRunInfo runInfo, IMetaData metaData)
+        public IRunInfo CreateRequest(IRunInfo runInfo)
         {
             using var context = GetDbContextFactory().Create();
-            var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
+            var request = CreateEntityFrameworkRequest(runInfo);
             var jobId = GetRunInfo(runInfo).JobId;
             context.Set<TRequest>().Add(request);
             context.SaveChanges();
             return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path.Clone());
         }
 
-        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
+        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel, TMetaData metaData);
 
-        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData);
+        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo);
 
-        public IRunInfo GetJobId(IKernel kernel, IRunInfo runInfo)
+        public IRunInfo GetJobId(IKernel kernel, IRunInfo runInfo, IMetaData metaData)
         {
             if (GetRunInfo(runInfo).JobId == 0)
             {
-                return CreateJob(kernel, runInfo);
+                return CreateJob(kernel, runInfo, metaData as TMetaData);
             }
             else
             {
@@ -72,7 +67,7 @@ namespace AutomationFramework.EntityFramework
         public IMetaData GetMetaData(IRunInfo runInfo)
         {
             using var context = GetDbContextFactory().Create();
-            return context.Set<TRequest>().Single(x => x.Id == GetRunInfo(runInfo).RequestId).MetaDataJson.FromJson<TMetaData>(); 
+            return context.Set<TJob>().Single(x => x.Id == GetRunInfo(runInfo).JobId).MetaDataJson.FromJson<TMetaData>(); 
         }
 
         public void CreateStage(IModule module)
