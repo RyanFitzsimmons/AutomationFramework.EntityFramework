@@ -64,12 +64,6 @@ namespace AutomationFramework.EntityFramework
             }
         }
 
-        public IMetaData GetMetaData(IRunInfo runInfo)
-        {
-            using var context = GetDbContextFactory().Create();
-            return context.Set<TJob>().Single(x => x.Id == GetRunInfo(runInfo).JobId).MetaDataJson.FromJson<TMetaData>(); 
-        }
-
         public void CreateStage(IModule module)
         {
             using var context = GetDbContextFactory().Create();
