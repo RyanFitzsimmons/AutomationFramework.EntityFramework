@@ -80,21 +80,21 @@ namespace AutomationFramework.EntityFramework
         public TResult GetCurrentResult<TResult>(IModule module) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.Path, context);
+            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
             return stage?.GetResult<TResult>();
         }
 
         public TResult GetPreviousResult<TResult>(IModule module) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetLastStageWithResult(GetRunInfo(module.RunInfo), module.Path, context);
+            var stage = GetLastStageWithResult(GetRunInfo(module.RunInfo), module.StagePath, context);
             return stage?.GetResult<TResult>();
         }
 
         public void SaveResult<TResult>(IModule module, TResult result) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.Path, context);
+            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
             stage.SetResult(result);
             context.SaveChanges();
         }
@@ -102,7 +102,7 @@ namespace AutomationFramework.EntityFramework
         public void SetStatus(IModule module, StageStatuses status)
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.Path, context);
+            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
             stage.Status = status;
             switch (status)
             {

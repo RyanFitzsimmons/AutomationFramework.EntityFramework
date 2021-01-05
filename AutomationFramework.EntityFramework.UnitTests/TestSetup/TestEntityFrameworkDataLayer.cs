@@ -46,7 +46,7 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
             {
                 JobId = runInfo.JobId,
                 RequestId = runInfo.RequestId,
-                Path = module.Path,
+                Path = module.StagePath,
                 Name = module.Name,
                 Status = StageStatuses.None,
             };
