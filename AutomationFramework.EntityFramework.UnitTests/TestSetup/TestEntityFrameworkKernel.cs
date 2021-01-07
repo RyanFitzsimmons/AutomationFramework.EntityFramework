@@ -23,7 +23,7 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
         protected override IStageBuilder Configure()
         {
             return GetStageBuilder<TestEntityFrameworkModule>()
-                .Configure((ri, sp, md) => new(ri, sp, md)
+                .Configure((b) => new(b)
                 {
                     Name = "Test EntityFramework Stage",
                     IsEnabled = true,

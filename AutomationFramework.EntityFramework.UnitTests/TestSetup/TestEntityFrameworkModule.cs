@@ -7,7 +7,7 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
     public class TestEntityFrameworkModule : Module<TestEntityFrameworkResult>
     {
-        public TestEntityFrameworkModule(IDataLayer dataLayer, IRunInfo runInfo, StagePath stagePath) : base(dataLayer, runInfo, stagePath)
+        public TestEntityFrameworkModule(IStageBuilder builder) : base(builder)
         {
         }
 
