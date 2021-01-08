@@ -18,24 +18,24 @@ namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
             return new TestDbContextFactory();
         }
 
-        protected override TestEntityFrameworkJob CreateEntityFrameworkJob(IKernel kernel, TMetaData metaData)
+        protected override TestEntityFrameworkJob CreateEntityFrameworkJob(IKernel kernel)
         {
             return new TestEntityFrameworkJob
             {
                 Name = kernel.Name,
                 Version = kernel.Version,
                 CreatedAt = DateTime.Now,
-                MetaDataJson = metaData.ToJson(),
             };
         }
 
-        protected override TestEntityFrameworkRequest CreateEntityFrameworkRequest(IRunInfo runInfo)
+        protected override TestEntityFrameworkRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData)
         {
             return new TestEntityFrameworkRequest
             {
                 JobId = GetRunInfo(runInfo).JobId,
                 RunType = runInfo.Type,
                 Path = runInfo.Path,
+                MetaDataJson = metaData.ToJson(),
             };
         }
 

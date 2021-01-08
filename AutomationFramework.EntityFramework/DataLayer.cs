@@ -20,7 +20,18 @@ namespace AutomationFramework.EntityFramework
             return runInfo as RunInfo<int>;
         }
 
-        public void CheckExistingJob(IRunInfo runInfo, string version)
+        public bool GetIsNewJob(IRunInfo runInfo) => GetRunInfo(runInfo).JobId == 0;
+
+        public IRunInfo CreateJob(IKernel kernel, IRunInfo runInfo)
+        {
+            using var context = GetDbContextFactory().Create();
+            var job = CreateEntityFrameworkJob(kernel);
+            context.Set<TJob>().Add(job);
+            context.SaveChanges();
+            return new RunInfo<int>(runInfo.Type, job.Id, GetRunInfo(runInfo).RequestId, runInfo.Path);
+        }
+
+        public void ValidateExistingJob(IRunInfo runInfo, string version)
         {
             using var context = GetDbContextFactory().Create();
             var jobId = GetRunInfo(runInfo).JobId;
@@ -28,41 +39,19 @@ namespace AutomationFramework.EntityFramework
                 throw new Exception($"The job ({jobId}) either doesn't exist or last ran with an old version of program");
         }
 
-        public IRunInfo CreateJob(IKernel kernel, IRunInfo runInfo, TMetaData metaData)
+        public IRunInfo CreateRequest(IRunInfo runInfo, IMetaData metaData)
         {
             using var context = GetDbContextFactory().Create();
-            var job = CreateEntityFrameworkJob(kernel, metaData);
-            context.Set<TJob>().Add(job);
-            context.SaveChanges();
-            return new RunInfo<int>(runInfo.Type, job.Id, GetRunInfo(runInfo).RequestId, runInfo.Path.Clone());
-        }
-
-        public IRunInfo CreateRequest(IRunInfo runInfo)
-        {
-            using var context = GetDbContextFactory().Create();
-            var request = CreateEntityFrameworkRequest(runInfo);
+            var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
             var jobId = GetRunInfo(runInfo).JobId;
             context.Set<TRequest>().Add(request);
             context.SaveChanges();
-            return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path.Clone());
+            return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path);
         }
 
-        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel, TMetaData metaData);
+        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
 
-        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo);
-
-        public IRunInfo GetJobId(IKernel kernel, IRunInfo runInfo, IMetaData metaData)
-        {
-            if (GetRunInfo(runInfo).JobId == 0)
-            {
-                return CreateJob(kernel, runInfo, metaData as TMetaData);
-            }
-            else
-            {
-                CheckExistingJob(runInfo, kernel.Version);
-                return runInfo;
-            }
-        }
+        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData);
 
         public void CreateStage(IModule module)
         {
