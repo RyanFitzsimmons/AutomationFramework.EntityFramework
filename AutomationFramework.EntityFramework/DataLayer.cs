@@ -106,12 +106,12 @@ namespace AutomationFramework.EntityFramework
 
         private static TStage GetStage(RunInfo<int> runInfo, StagePath path, DbContext context)
         {
-            return context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.PathString == path.ToString());
+            return context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.Path == path);
         }
 
         private static TStage GetLastStageWithResult(RunInfo<int> runInfo, StagePath path, DbContext context)
         {
-            return context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.PathString == path.ToString() && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
+            return context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.Path == path && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
         }
     }
 }

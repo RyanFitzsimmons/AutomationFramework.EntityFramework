@@ -11,10 +11,7 @@ namespace AutomationFramework.EntityFramework
         public int Id { get; set; }
         public RunType RunType { get; set; }
         public int JobId { get; set; }
-        [Column("Path")]
-        public string PathString { get; set; }
-        [NotMapped]
-        public StagePath Path { get => StagePath.Parse(PathString); set => PathString = value.ToString(); }
+        public StagePath Path { get; set; }
         [Column("MetaData")]
         public string MetaDataJson { get; set; }
     }
