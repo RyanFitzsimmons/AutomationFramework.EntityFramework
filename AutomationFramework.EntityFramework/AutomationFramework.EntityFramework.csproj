@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <PackageId>AutomationFramework.EntityFramework</PackageId>
-    <Version>1.0.33</Version>
+    <Version>1.0.34</Version>
     <Authors>Ryan Fitzsimmons</Authors>
     <PackageDescription>Library to connect entityframework to automationframework</PackageDescription>
     <RepositoryUrl>https://github.com/RyanFitzsimmons/AutomationFramework.EntityFramework/tree/master/AutomationFramework.EntityFramework</RepositoryUrl>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutomationFramework" Version="1.0.34" />
+    <PackageReference Include="AutomationFramework" Version="1.0.36" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
   </ItemGroup>
 
