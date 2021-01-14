@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class Stage
+    public abstract class EFStage
     {
         [Key]
         public int Id { get; set; }

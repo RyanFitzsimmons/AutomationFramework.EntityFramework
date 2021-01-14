@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class Job
+    public abstract class EFJob
     {
         [Key]
         public int Id { get; set; }

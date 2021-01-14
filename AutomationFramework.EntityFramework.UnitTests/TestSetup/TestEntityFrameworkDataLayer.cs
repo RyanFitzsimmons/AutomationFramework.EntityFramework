@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkDataLayer<TMetaData> : DataLayer<
+    public class TestEntityFrameworkDataLayer<TMetaData> : EFDataLayer<
             TestDbContext,
             TestEntityFrameworkJob,
             TestEntityFrameworkRequest,
             TMetaData,
             TestEntityFrameworkStage> where TMetaData : class, IMetaData
     {
-        protected override DbContextFactory GetDbContextFactory()
+        protected override EFDbContextFactory GetDbContextFactory()
         {
             return new TestDbContextFactory();
         }

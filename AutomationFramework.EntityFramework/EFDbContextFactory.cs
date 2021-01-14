@@ -2,7 +2,7 @@
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class DbContextFactory
+    public abstract class EFDbContextFactory
     {
         public abstract DbContext Create();
     }

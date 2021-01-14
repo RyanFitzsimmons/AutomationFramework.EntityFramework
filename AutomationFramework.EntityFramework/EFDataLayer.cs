@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class DataLayer<TDbContext, TJob, TRequest, TMetaData, TStage> : IDataLayer
+    public abstract class EFDataLayer<TDbContext, TJob, TRequest, TMetaData, TStage> : IDataLayer
         where TDbContext : DbContext
-        where TJob : Job
-        where TRequest : Request
+        where TJob : EFJob
+        where TRequest : EFRequest
         where TMetaData : class, IMetaData
-        where TStage : Stage
+        where TStage : EFStage
     {
-        protected abstract DbContextFactory GetDbContextFactory();
+        protected abstract EFDbContextFactory GetDbContextFactory();
 
         protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
 

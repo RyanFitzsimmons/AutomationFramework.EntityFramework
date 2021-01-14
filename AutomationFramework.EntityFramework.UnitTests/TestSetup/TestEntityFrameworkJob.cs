@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AutomationFramework.EntityFramework.UnitTests.TestSetup
 {
-    public class TestEntityFrameworkJob : Job
+    public class TestEntityFrameworkJob : EFJob
     {
     }
 }

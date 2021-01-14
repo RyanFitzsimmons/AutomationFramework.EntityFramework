@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AutomationFramework.EntityFramework
 {
-    public abstract class Request
+    public abstract class EFRequest
     {
         [Key]
         public int Id { get; set; }
