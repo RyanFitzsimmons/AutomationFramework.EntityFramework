@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AutomationFramework.EntityFramework
 {
@@ -15,10 +13,13 @@ namespace AutomationFramework.EntityFramework
     {
         protected abstract DbContextFactory GetDbContextFactory();
 
-        public RunInfo<int> GetRunInfo(IRunInfo runInfo)
-        {
-            return runInfo as RunInfo<int>;
-        }
+        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
+
+        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData);
+
+        protected abstract TStage CreateEntityFrameworkStage(IModule module);
+
+        public RunInfo<int> GetRunInfo(IRunInfo runInfo) => runInfo as RunInfo<int>;
 
         public bool GetIsNewJob(IRunInfo runInfo) => GetRunInfo(runInfo).JobId == 0;
 
@@ -48,10 +49,6 @@ namespace AutomationFramework.EntityFramework
             context.SaveChanges();
             return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path);
         }
-
-        protected abstract TJob CreateEntityFrameworkJob(IKernel kernel);
-
-        protected abstract TRequest CreateEntityFrameworkRequest(IRunInfo runInfo, TMetaData metaData);
 
         public void CreateStage(IModule module)
         {
@@ -102,16 +99,10 @@ namespace AutomationFramework.EntityFramework
             context.SaveChanges();
         }
 
-        protected abstract TStage CreateEntityFrameworkStage(IModule module);
+        private static TStage GetStage(RunInfo<int> runInfo, StagePath path, DbContext context) =>
+            context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.Path == path);
 
-        private static TStage GetStage(RunInfo<int> runInfo, StagePath path, DbContext context)
-        {
-            return context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.Path == path);
-        }
-
-        private static TStage GetLastStageWithResult(RunInfo<int> runInfo, StagePath path, DbContext context)
-        {
-            return context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.Path == path && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
-        }
+        private static TStage GetLastStageWithResult(RunInfo<int> runInfo, StagePath path, DbContext context) => 
+            context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.Path == path && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
     }
 }

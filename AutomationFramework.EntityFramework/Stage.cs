@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
@@ -6,6 +7,7 @@ namespace AutomationFramework.EntityFramework
 {
     public abstract class Stage
     {
+        [Key]
         public int Id { get; set; }
         public int JobId { get; set; }
         public int RequestId { get; set; }
