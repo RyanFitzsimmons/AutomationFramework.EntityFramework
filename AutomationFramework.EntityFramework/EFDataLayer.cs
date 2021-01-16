@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AutomationFramework.EntityFramework
 {
@@ -23,66 +25,67 @@ namespace AutomationFramework.EntityFramework
 
         public bool GetIsNewJob(IRunInfo runInfo) => GetRunInfo(runInfo).JobId == 0;
 
-        public IRunInfo CreateJob(IKernel kernel, IRunInfo runInfo)
+        public async Task<IRunInfo> CreateJob(IKernel kernel, IRunInfo runInfo, CancellationToken token)
         {
             using var context = GetDbContextFactory().Create();
             var job = CreateEntityFrameworkJob(kernel);
             context.Set<TJob>().Add(job);
-            context.SaveChanges();
+            await context.SaveChangesAsync(token);
             return new RunInfo<int>(runInfo.Type, job.Id, GetRunInfo(runInfo).RequestId, runInfo.Path);
         }
 
-        public void ValidateExistingJob(IRunInfo runInfo, string version)
+        public async Task ValidateExistingJob(IRunInfo runInfo, string version, CancellationToken token)
         {
             using var context = GetDbContextFactory().Create();
             var jobId = GetRunInfo(runInfo).JobId;
-            if (!context.Set<TJob>().Any(x => x.Id == jobId && x.Version == version))
+            if (!await context.Set<TJob>().AnyAsync(x => x.Id == jobId && x.Version == version, token))
                 throw new Exception($"The job ({jobId}) either doesn't exist or last ran with an old version of program");
         }
 
-        public IRunInfo CreateRequest(IRunInfo runInfo, IMetaData metaData)
+        public async Task<IRunInfo> CreateRequest(IRunInfo runInfo, IMetaData metaData, CancellationToken token)
         {
             using var context = GetDbContextFactory().Create();
             var request = CreateEntityFrameworkRequest(runInfo, metaData as TMetaData);
             var jobId = GetRunInfo(runInfo).JobId;
             context.Set<TRequest>().Add(request);
-            context.SaveChanges();
+            await context.SaveChangesAsync(token);
             return new RunInfo<int>(runInfo.Type, jobId, request.Id, runInfo.Path);
         }
 
-        public void CreateStage(IModule module)
+        public async Task CreateStage(IModule module, CancellationToken token)
         {
             using var context = GetDbContextFactory().Create();
             context.Set<TStage>().Add(CreateEntityFrameworkStage(module));
-            context.SaveChanges();
+            await context.SaveChangesAsync(token);
         }
 
-        public TResult GetCurrentResult<TResult>(IModule module) where TResult : class
+        public async Task<TResult> GetCurrentResult<TResult>(IModule module, CancellationToken token) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
+            var stage = await GetStage(GetRunInfo(module.RunInfo), module.StagePath, context, token);
             return stage?.GetResult<TResult>();
         }
 
-        public TResult GetPreviousResult<TResult>(IModule module) where TResult : class
+        public async Task<TResult> GetPreviousResult<TResult>(IModule module, CancellationToken token) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetLastStageWithResult(GetRunInfo(module.RunInfo), module.StagePath, context);
+            var stage = await GetLastStageWithResult(GetRunInfo(module.RunInfo), module.StagePath, context, token);
             return stage?.GetResult<TResult>();
         }
 
-        public void SaveResult<TResult>(IModule module, TResult result) where TResult : class
+        public async Task SaveResult<TResult>(IModule module, TResult result, CancellationToken token) where TResult : class
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
-            stage.SetResult(result);
-            context.SaveChanges();
+            var stage = await GetStage(GetRunInfo(module.RunInfo), module.StagePath, context, token);
+            stage?.SetResult(result);
+            await context.SaveChangesAsync(token);
         }
 
-        public void SetStatus(IModule module, StageStatuses status)
+        public async Task SetStatus(IModule module, StageStatuses status, CancellationToken token)
         {
             using var context = GetDbContextFactory().Create();
-            var stage = GetStage(GetRunInfo(module.RunInfo), module.StagePath, context);
+            var stage = await GetStage(GetRunInfo(module.RunInfo), module.StagePath, context, token);
+            if (token.IsCancellationRequested) return;
             stage.Status = status;
             switch (status)
             {
@@ -96,13 +99,13 @@ namespace AutomationFramework.EntityFramework
                 default:
                     break;
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync(token);
         }
 
-        private static TStage GetStage(RunInfo<int> runInfo, StagePath path, DbContext context) =>
-            context.Set<TStage>().Single(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.Path == path);
+        private static async Task<TStage> GetStage(RunInfo<int> runInfo, StagePath path, DbContext context, CancellationToken token) =>
+            await context.Set<TStage>().SingleAsync(x => x.JobId == runInfo.JobId && x.RequestId == runInfo.RequestId && x.Path == path, token);
 
-        private static TStage GetLastStageWithResult(RunInfo<int> runInfo, StagePath path, DbContext context) => 
-            context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.Path == path && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefault();
+        private static async Task<TStage> GetLastStageWithResult(RunInfo<int> runInfo, StagePath path, DbContext context, CancellationToken token) => 
+            await context.Set<TStage>().Where(x => x.JobId == runInfo.JobId && x.Path == path && x.ResultJson != null).OrderBy(x => x.RequestId).LastOrDefaultAsync(token);
     }
 }
