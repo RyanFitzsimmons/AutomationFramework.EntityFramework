@@ -40,9 +40,33 @@ namespace AutomationFramework.EntityFramework.UnitTests
             return $"{path} - {message}";
         }
 
-        public void Dispose()
+        private bool _disposed = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            Log.CloseAndFlush();
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // called via myClass.Dispose(). 
+                    // OK to use any private object references
+                }
+                // Release unmanaged resources.
+                // Set large fields to null.     
+                Log.CloseAndFlush();
+                _disposed = true;
+            }
+        }
+
+        public void Dispose() // Implement IDisposable
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~TestLogger() // the finalizer
+        {
+            Dispose(false);
         }
     }
 }
